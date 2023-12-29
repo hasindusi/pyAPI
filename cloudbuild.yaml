@@ -1,0 +1,15 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', '$LOCATION-docker.pkg.dev/$PROJECT_ID/$_SERVICE_NAME/$COMMIT_SHA', '.']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', '$LOCATION-docker.pkg.dev/$PROJECT_ID/$_SERVICE_NAME/$COMMIT_SHA']
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args:
+    - 'run'
+    - 'deploy'
+    - '$_SERVICE_NAME'
+    - '--image'
+    - '$LOCATION-docker.pkg.dev/$PROJECT_ID/$_SERVICE_NAME/$COMMIT_SHA'
+    - '--region'
+    - '$_DEPLOY_REGION'
